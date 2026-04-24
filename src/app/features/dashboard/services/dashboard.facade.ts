@@ -5,6 +5,8 @@ import { DashboardState } from '../state/dashboard.state';
 import { DashboardStateService } from '../state/dashboard-state.service';
 import { TicketsApi } from '../../../core/api/tickets.api';
 import { mapTicket } from '../../../core/mappers/ticket.mapper';
+import { GroupsApi } from '../../../core/api/groups.api';
+import { PrioritiesApi } from '../../../core/api/priorities.api';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +15,13 @@ export class DashboardFacade {
   readonly state$: Observable<DashboardState>;
 
   constructor(
-    private readonly stateService: DashboardStateService,
-    private readonly ticketsApi: TicketsApi
-  ) {
-    // ✅ init AFTER DI is available
-    this.state$ = this.stateService.state$;
-  }
+  private readonly stateService: DashboardStateService,
+  private readonly ticketsApi: TicketsApi,
+  private readonly groupsApi: GroupsApi,
+  private readonly prioritiesApi: PrioritiesApi
+) {
+  this.state$ = this.stateService.state$;
+}
 
   updateFilter(filter: Partial<DashboardFilter>): void {
     this.stateService.updateFilter(filter);
@@ -50,4 +53,16 @@ export class DashboardFacade {
         },
       });
   }
+  
+  loadPriorities(): void {
+  this.prioritiesApi.getPriorities().subscribe({
+    next: priorities => this.stateService.setPriorities(priorities),
+  });
+}
+
+loadGroups(): void {
+  this.groupsApi.getGroupsDropdown().subscribe({
+    next: groups => this.stateService.setGroups(groups),
+  });
+}
 }

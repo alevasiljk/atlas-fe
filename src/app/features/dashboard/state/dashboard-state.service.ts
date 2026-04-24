@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, distinctUntilChanged } from 'rxjs';
 import { DashboardFilter } from '../models/dashboard-filter.model';
 import { DashboardState } from './dashboard.state';
+import { PriorityDto } from '../../../core/dto/priority.dto';
+import { GroupDropdownDto } from '../../../core/dto/group-dropdown.dto';
 
 const DEFAULT_FILTER: DashboardFilter = {
   page: 0,
@@ -14,6 +16,8 @@ const INITIAL_STATE: DashboardState = {
   filter: DEFAULT_FILTER,
   loading: false,
   tickets: [],
+  priorities: [],
+  groups: [],
 };
 
 @Injectable({
@@ -52,6 +56,14 @@ export class DashboardStateService {
 
 setTickets(tickets: Ticket[]): void {
   this.patchState({ tickets });
+}
+
+setPriorities(priorities: PriorityDto[]): void {
+  this.patchState({ priorities });
+}
+
+setGroups(groups: GroupDropdownDto[]): void {
+  this.patchState({ groups });
 }
 
   private patchState(partial: Partial<DashboardState>): void {
