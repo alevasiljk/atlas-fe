@@ -24,11 +24,9 @@ const INITIAL_STATE: DashboardState = {
   providedIn: 'root',
 })
 export class DashboardStateService {
-  private readonly stateSubject =
-    new BehaviorSubject<DashboardState>(INITIAL_STATE);
+  private readonly stateSubject = new BehaviorSubject<DashboardState>(INITIAL_STATE);
 
-  readonly state$: Observable<DashboardState> =
-    this.stateSubject.asObservable();
+  readonly state$: Observable<DashboardState> = this.stateSubject.asObservable();
 
   get snapshot(): DashboardState {
     return this.stateSubject.value;
@@ -37,9 +35,7 @@ export class DashboardStateService {
   updateFilter(partial: Partial<DashboardFilter>): void {
     const current = this.snapshot.filter;
 
-    const shouldResetPage = Object.keys(partial).some(
-      key => key !== 'page'
-    );
+    const shouldResetPage = Object.keys(partial).some((key) => key !== 'page');
 
     const nextFilter: DashboardFilter = {
       ...current,
@@ -51,20 +47,20 @@ export class DashboardStateService {
   }
 
   setLoading(loading: boolean): void {
-  this.patchState({ loading });
-}
+    this.patchState({ loading });
+  }
 
-setTickets(tickets: Ticket[]): void {
-  this.patchState({ tickets });
-}
+  setTickets(tickets: Ticket[]): void {
+    this.patchState({ tickets });
+  }
 
-setPriorities(priorities: PriorityDto[]): void {
-  this.patchState({ priorities });
-}
+  setPriorities(priorities: PriorityDto[]): void {
+    this.patchState({ priorities });
+  }
 
-setGroups(groups: GroupDropdownDto[]): void {
-  this.patchState({ groups });
-}
+  setGroups(groups: GroupDropdownDto[]): void {
+    this.patchState({ groups });
+  }
 
   private patchState(partial: Partial<DashboardState>): void {
     this.stateSubject.next({
@@ -72,11 +68,11 @@ setGroups(groups: GroupDropdownDto[]): void {
       ...partial,
     });
   }
-  
+
   onFilterChange$(): Observable<DashboardFilter> {
-  return this.state$.pipe(
-    map(state => state.filter),
-    distinctUntilChanged()
-  );
-}
+    return this.state$.pipe(
+      map((state) => state.filter),
+      distinctUntilChanged(),
+    );
+  }
 }

@@ -15,13 +15,13 @@ export class DashboardFacade {
   readonly state$: Observable<DashboardState>;
 
   constructor(
-  private readonly stateService: DashboardStateService,
-  private readonly ticketsApi: TicketsApi,
-  private readonly groupsApi: GroupsApi,
-  private readonly prioritiesApi: PrioritiesApi
-) {
-  this.state$ = this.stateService.state$;
-}
+    private readonly stateService: DashboardStateService,
+    private readonly ticketsApi: TicketsApi,
+    private readonly groupsApi: GroupsApi,
+    private readonly prioritiesApi: PrioritiesApi,
+  ) {
+    this.state$ = this.stateService.state$;
+  }
 
   updateFilter(filter: Partial<DashboardFilter>): void {
     this.stateService.updateFilter(filter);
@@ -38,11 +38,9 @@ export class DashboardFacade {
 
     this.ticketsApi
       .getTickets(filter)
-      .pipe(
-        map(page => page.items.map(mapTicket))
-      )
+      .pipe(map((page) => page.items.map(mapTicket)))
       .subscribe({
-        next: tickets => {
+        next: (tickets) => {
           this.stateService.setTickets(tickets);
         },
         error: () => {
@@ -53,16 +51,16 @@ export class DashboardFacade {
         },
       });
   }
-  
-  loadPriorities(): void {
-  this.prioritiesApi.getPriorities().subscribe({
-    next: priorities => this.stateService.setPriorities(priorities),
-  });
-}
 
-loadGroups(): void {
-  this.groupsApi.getGroupsDropdown().subscribe({
-    next: groups => this.stateService.setGroups(groups),
-  });
-}
+  loadPriorities(): void {
+    this.prioritiesApi.getPriorities().subscribe({
+      next: (priorities) => this.stateService.setPriorities(priorities),
+    });
+  }
+
+  loadGroups(): void {
+    this.groupsApi.getGroupsDropdown().subscribe({
+      next: (groups) => this.stateService.setGroups(groups),
+    });
+  }
 }
