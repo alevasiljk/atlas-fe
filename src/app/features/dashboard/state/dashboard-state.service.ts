@@ -1,3 +1,4 @@
+import { Ticket } from '../../../core/mappers/ticket.mapper';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, distinctUntilChanged } from 'rxjs';
 import { DashboardFilter } from '../models/dashboard-filter.model';
@@ -12,6 +13,7 @@ const DEFAULT_FILTER: DashboardFilter = {
 const INITIAL_STATE: DashboardState = {
   filter: DEFAULT_FILTER,
   loading: false,
+  tickets: [],
 };
 
 @Injectable({
