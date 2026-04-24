@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, map, distinctUntilChanged } from 'rxjs';
 import { DashboardFilter } from '../models/dashboard-filter.model';
 import { DashboardState } from './dashboard.state';
 
@@ -54,4 +54,11 @@ export class DashboardStateService {
       ...partial,
     });
   }
+  
+  onFilterChange$(): Observable<DashboardFilter> {
+  return this.state$.pipe(
+    map(state => state.filter),
+    distinctUntilChanged()
+  );
+}
 }
