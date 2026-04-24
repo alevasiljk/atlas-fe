@@ -75,4 +75,34 @@ export class DashboardFacade {
   changeSort(sort: 'asc' | 'desc'): void {
     this.stateService.setSort(sort);
   }
+
+  /**
+   * Force reload of tickets without changing filters.
+   *
+   * Used for:
+   * - manual sync button
+   * - backend enrichment completion
+   * - future SignalR integration
+   */
+  refresh(): void {
+    // IMPORTANT:
+    // We intentionally DO NOT call updateFilter here,
+    // to avoid resetting pagination or other filter state.
+
+    this.loadTickets();
+  }
+
+  /**
+   * TODO (Phase 7):
+   * SignalR / WebSocket hook.
+   *
+   * Example:
+   *
+   * this.signalRService.onEnrichmentCompleted()
+   *   .subscribe(() => {
+   *     this.refresh();
+   *   });
+   *
+   * This keeps real-time updates isolated from UI code.
+   */
 }

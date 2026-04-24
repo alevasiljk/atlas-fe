@@ -87,4 +87,8 @@ export class DashboardStateService {
       distinctUntilChanged(),
     );
   }
+
+  // TODO (Future):
+  // syncInProgress: boolean;
+  // lastSyncAt: Date;
 }
