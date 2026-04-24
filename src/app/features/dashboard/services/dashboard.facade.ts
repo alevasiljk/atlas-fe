@@ -63,4 +63,16 @@ export class DashboardFacade {
       next: (groups) => this.stateService.setGroups(groups),
     });
   }
+
+  changePage(page: number): void {
+    this.stateService.setPage(page);
+  }
+
+  changePageSize(pageSize: number): void {
+    this.stateService.setPageSize(pageSize);
+  }
+
+  changeSort(sort: 'asc' | 'desc'): void {
+    this.stateService.setSort(sort);
+  }
 }

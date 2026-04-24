@@ -62,6 +62,18 @@ export class DashboardStateService {
     this.patchState({ groups });
   }
 
+  setPage(page: number): void {
+    this.updateFilter({ page });
+  }
+
+  setPageSize(pageSize: number): void {
+    this.updateFilter({ pageSize });
+  }
+
+  setSort(sort: 'asc' | 'desc'): void {
+    this.updateFilter({ sort });
+  }
+
   private patchState(partial: Partial<DashboardState>): void {
     this.stateSubject.next({
       ...this.snapshot,
