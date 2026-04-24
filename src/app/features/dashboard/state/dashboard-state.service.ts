@@ -47,8 +47,12 @@ export class DashboardStateService {
   }
 
   setLoading(loading: boolean): void {
-    this.patchState({ loading });
-  }
+  this.patchState({ loading });
+}
+
+setTickets(tickets: Ticket[]): void {
+  this.patchState({ tickets });
+}
 
   private patchState(partial: Partial<DashboardState>): void {
     this.stateSubject.next({
