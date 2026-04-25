@@ -1,0 +1,64 @@
+<div class="side-panel-overlay" *ngIf="state$ | async as state">
+  <aside class="side-panel" *ngIf="state.sidePanelOpen">
+    <!-- HEADER -->
+    <header class="side-panel-header">
+      <h2 *ngIf="state.selectedGroup; else noGroupTitle">
+        {{ state.selectedGroup.name }}
+      </h2>
+
+      <ng-template #noGroupTitle>
+        <h2>This ticket has no group assigned</h2>
+      </ng-template>
+
+      <button class="close-btn" (click)="close()">✕</button>
+    </header>
+
+    <hr />
+
+    <!-- GROUP TICKETS -->
+    <section *ngIf="state.selectedGroup; else noGroupContent">
+      <div
+        class="ticket-card"
+        *ngFor="let ticket of state.selectedGroup.tickets; trackBy: trackByTicketId; let i = index"
+        [class.highlighted]="i === 0"
+      >
+        <div class="ticket-header" (click)="toggle(ticket.id)">
+          <div>
+            <strong>{{ ticket.jiraKey }}</strong>
+            <p>{{ ticket.summary || '-' }}</p>
+          </div>
+
+          <span class="status">
+            {{ ticket.resolved ? 'Resolved' : 'Unresolved' }}
+          </span>
+        </div>
+
+        <div class="ticket-body" *ngIf="i === 0 || isExpanded(ticket.id)">
+          <p>{{ ticket.description }}</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <!-- ANALYSIS -->
+      <section class="analysis">
+        <h4>ANALYSIS</h4>
+        <p class="placeholder">Click “Generate Analysis” to create a summary for this group.</p>
+
+        <div class="analysis-actions">
+          <button disabled>Generate Analysis</button>
+
+          <div class="feedback">
+            <button disabled>👍</button>
+            <button disabled>👎</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- NO GROUP CONTENT -->
+    <ng-template #noGroupContent>
+      <p class="no-group-text">This ticket has no group assigned.</p>
+    </ng-template>
+  </aside>
+</div>
