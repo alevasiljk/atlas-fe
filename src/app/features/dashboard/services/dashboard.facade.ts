@@ -7,6 +7,7 @@ import { TicketsApi } from '../../../core/api/tickets.api';
 import { mapTicket } from '../../../core/mappers/ticket.mapper';
 import { GroupsApi } from '../../../core/api/groups.api';
 import { PrioritiesApi } from '../../../core/api/priorities.api';
+import { GroupDetailsApi } from '../../../core/api/group-details.api';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class DashboardFacade {
     private readonly ticketsApi: TicketsApi,
     private readonly groupsApi: GroupsApi,
     private readonly prioritiesApi: PrioritiesApi,
+    private readonly groupDetailsApi: GroupDetailsApi,
   ) {
     this.state$ = this.stateService.state$;
   }
@@ -105,4 +107,14 @@ export class DashboardFacade {
    *
    * This keeps real-time updates isolated from UI code.
    */
+
+  openGroupDetails(groupId: string): void {
+    this.groupDetailsApi.getGroupDetails(groupId).subscribe({
+      next: (group) => this.stateService.openSidePanel(group),
+    });
+  }
+
+  closeSidePanel(): void {
+    this.stateService.closeSidePanel();
+  }
 }

@@ -5,6 +5,7 @@ import { DashboardFilter } from '../models/dashboard-filter.model';
 import { DashboardState } from './dashboard.state';
 import { PriorityDto } from '../../../core/dto/priority.dto';
 import { GroupDropdownDto } from '../../../core/dto/group-dropdown.dto';
+import { GroupDetailsDto } from '../../../core/dto/group-details.dto';
 
 const DEFAULT_FILTER: DashboardFilter = {
   page: 0,
@@ -18,6 +19,11 @@ const INITIAL_STATE: DashboardState = {
   tickets: [],
   priorities: [],
   groups: [],
+  selectedGroup: null,
+  sidePanelOpen: false,
+};
+  selectedGroup: GroupDetailsDto | null;
+sidePanelOpen: boolean;
 };
 
 @Injectable({
@@ -91,4 +97,18 @@ export class DashboardStateService {
   // TODO (Future):
   // syncInProgress: boolean;
   // lastSyncAt: Date;
+
+  openSidePanel(group: GroupDetailsDto): void {
+  this.patchState({
+    selectedGroup: group,
+    sidePanelOpen: true,
+  });
+}
+
+closeSidePanel(): void {
+  this.patchState({
+    selectedGroup: null,
+    sidePanelOpen: false,
+  });
+}
 }
