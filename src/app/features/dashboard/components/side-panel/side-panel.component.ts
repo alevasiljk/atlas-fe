@@ -1,3 +1,10 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { DashboardFacade } from '../../services/dashboard.facade';
 import { DashboardState } from '../../state/dashboard.state';
@@ -6,9 +13,19 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-side-panel',
+  standalone: true,
   templateUrl: './side-panel.component.html',
   styleUrls: ['./side-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatExpansionModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+  ],
 })
 export class SidePanelComponent implements OnDestroy {
   // ─────────────────────────────────────────────

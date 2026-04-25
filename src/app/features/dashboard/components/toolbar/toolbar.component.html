@@ -1,0 +1,99 @@
+<mat-toolbar class="dashboard-toolbar">
+  <!-- ── Brand ─────────────────────────────────── -->
+  <span class="toolbar-brand">
+    <svg
+      class="brand-logo"
+      viewBox="0 0 32 32"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <polygon
+        points="16,2 30,28 2,28"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linejoin="round"
+      />
+      <line
+        x1="9"
+        y1="21"
+        x2="23"
+        y2="21"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+      />
+    </svg>
+    <span class="brand-name">ATLAS</span>
+  </span>
+
+  <!-- ── Filters ───────────────────────────────── -->
+  <div class="toolbar-filters">
+    <!-- Status -->
+    <select
+      class="filter-select"
+      aria-label="Status filter"
+      [ngModel]="status"
+      (ngModelChange)="onStatusChange($event)"
+    >
+      <option value="ALL">All</option>
+      <option value="UNRESOLVED">Unresolved</option>
+      <option value="RESOLVED">Resolved</option>
+    </select>
+
+    <!-- Priority -->
+    <select
+      class="filter-select"
+      aria-label="Priority filter"
+      [ngModel]="priority"
+      (ngModelChange)="onPriorityChange($event)"
+    >
+      <option value="">All priorities</option>
+      <option *ngFor="let p of priorities" [value]="p.name">
+        {{ p.name }}
+      </option>
+    </select>
+
+    <!-- Groups -->
+    <div class="groups-filter">
+      <button
+        class="filter-btn"
+        type="button"
+        (click)="toggleGroups()"
+        [disabled]="groups.length === 0"
+      >
+        Groups
+        <span class="groups-caret">
+          {{ groupsExpanded ? '▲' : '▼' }}
+        </span>
+      </button>
+
+      <div class="groups-dropdown" *ngIf="groupsExpanded">
+        <label class="group-option" *ngFor="let g of groups" (click)="$event.stopPropagation()">
+          <input
+            type="checkbox"
+            [checked]="selectedGroupIds.includes(g.groupId)"
+            (change)="onGroupToggle(g.groupId, $event.target.checked)"
+          />
+          {{ g.groupName }} ({{ g.numberOfUnresolvedTickets }} unresolved)
+        </label>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <input
+      class="filter-search"
+      type="search"
+      placeholder="Search by ticket ID, name or description"
+      [value]="searchText"
+      (input)="onSearchChange($event.target.value)"
+    />
+  </div>
+
+  <!-- ── Language (temporarily removed) ────────── -->
+  <!--
+  <div class="toolbar-lang">
+    EN | IT
+  </div>
+  -->
+</mat-toolbar>

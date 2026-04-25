@@ -1,0 +1,113 @@
+.dashboard-toolbar {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  background-color: #13161f !important;
+  color: #f0f0f0 !important;
+}
+
+/* Brand */
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 24px;
+
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .brand-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Filters */
+.toolbar-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.filter-select,
+.filter-btn,
+.filter-search {
+  background: #1e2130;
+  color: #f0f0f0;
+  border: 1px solid #3a3f55;
+  border-radius: 4px;
+  padding: 0 10px;
+  font-size: 13px;
+  height: 32px;
+
+  &:focus {
+    border-color: #5c6bc0;
+  }
+}
+
+.filter-search {
+  width: 280px;
+
+  &::placeholder {
+    color: #8b8fa8;
+  }
+}
+
+/* Groups */
+.groups-filter {
+  position: relative;
+}
+
+.groups-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #1e2130;
+  border: 1px solid #3a3f55;
+  border-radius: 4px;
+  padding: 8px;
+  min-width: 160px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 30;
+}
+
+.group-option {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Language */
+.toolbar-lang {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid #3a3f55;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: #8b8fa8;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 6px;
+  cursor: pointer;
+
+  &.lang-active {
+    color: #f0f0f0;
+  }
+}
+
+.lang-sep {
+  color: #3a3f55;
+  font-size: 12px;
+}

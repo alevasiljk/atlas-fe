@@ -3,17 +3,19 @@
     <h2 class="side-panel__title">
       {{ ticket?.groupName }}
     </h2>
+
     <div class="side-panel__header-actions">
       @if (groupTickets.length > 0) {
         <button
           mat-icon-button
           (click)="generateAnalysis()"
-          [matTooltip]="i18n.labels().generateAnalysis"
           aria-label="Generate analysis"
+          disabled
         >
           <mat-icon>auto_awesome</mat-icon>
         </button>
       }
+
       <button mat-icon-button (click)="onClose()" aria-label="Close panel" cdkFocusInitial>
         <mat-icon>close</mat-icon>
       </button>
@@ -64,7 +66,7 @@
       </p>
     }
 
-    <!-- Empty state (group exists but no other members) -->
+    <!-- Empty state -->
     @if (!loading && !error && !noGroup && otherGroupTickets.length === 0) {
       <p class="side-panel__empty">No related tickets.</p>
     }
@@ -94,14 +96,16 @@
     }
   </div>
 
-  <!-- Group Analysis Comment — only when related tickets exist -->
+  <!-- Group Analysis Comment -->
   @if (!loading && !error && !noGroup && groupTickets.length > 0 && ticket) {
     <mat-divider />
+
     <div class="side-panel__group-analysis">
       <div class="side-panel__group-analysis-header">
         <mat-icon class="analysis-icon">insights</mat-icon>
-        <span class="analysis-title">{{ i18n.labels().groupAnalysisComment }}</span>
+        <span class="analysis-title">Group analysis</span>
       </div>
+
       <div class="analysis-text-box">
         @if (analysisText) {
           <p class="analysis-text">{{ ticket.description }}</p>
@@ -109,10 +113,10 @@
             mat-icon-button
             class="analysis-copy-btn"
             (click)="copyGroupAnalysis()"
-            [matTooltip]="copied ? 'Copied!' : 'Copy analysis'"
             aria-label="Copy group analysis to clipboard"
+            disabled
           >
-            <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+            <mat-icon>content_copy</mat-icon>
           </button>
         } @else {
           <p class="analysis-placeholder">
@@ -120,23 +124,13 @@
           </p>
         }
       </div>
+
       <div class="analysis-feedback">
-        <button
-          mat-icon-button
-          [class.analysis-feedback--active]="feedback === 'up'"
-          (click)="onFeedback('up')"
-          aria-label="Thumbs up – helpful"
-          matTooltip="Helpful"
-        >
+        <button mat-icon-button (click)="onFeedback('up')" aria-label="Helpful" disabled>
           <mat-icon>thumb_up</mat-icon>
         </button>
-        <button
-          mat-icon-button
-          [class.analysis-feedback--active]="feedback === 'down'"
-          (click)="onFeedback('down')"
-          aria-label="Thumbs down – not helpful"
-          matTooltip="Not helpful"
-        >
+
+        <button mat-icon-button (click)="onFeedback('down')" aria-label="Not helpful" disabled>
           <mat-icon>thumb_down</mat-icon>
         </button>
       </div>

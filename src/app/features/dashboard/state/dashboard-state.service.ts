@@ -22,9 +22,6 @@ const INITIAL_STATE: DashboardState = {
   selectedGroup: null,
   sidePanelOpen: false,
 };
-  selectedGroup: GroupDetailsDto | null;
-sidePanelOpen: boolean;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -99,16 +96,16 @@ export class DashboardStateService {
   // lastSyncAt: Date;
 
   openSidePanel(group: GroupDetailsDto): void {
-  this.patchState({
-    selectedGroup: group,
-    sidePanelOpen: true,
-  });
-}
+    this.patchState({
+      selectedGroup: group,
+      sidePanelOpen: true,
+    });
+  }
 
-closeSidePanel(): void {
-  this.patchState({
-    selectedGroup: null,
-    sidePanelOpen: false,
-  });
-}
+  closeSidePanel(): void {
+    this.patchState({
+      selectedGroup: null,
+      sidePanelOpen: false,
+    });
+  }
 }
