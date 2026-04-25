@@ -1,39 +1,99 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { DashboardFacade } from '../../services/dashboard.facade';
 import { DashboardState } from '../../state/dashboard.state';
+import { GroupDetailsTicketDto } from '../../../../core/dto/group-details.dto';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-side-panel',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './side-panel.component.html',
   styleUrls: ['./side-panel.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidePanelComponent {
-  readonly state$: Observable<DashboardState>;
+export class SidePanelComponent implements OnDestroy {
+  // ─────────────────────────────────────────────
+  // Legacy template-bound properties (DO NOT RENAME)
+  // ─────────────────────────────────────────────
 
-  expandedTicketId: string | null = null;
+  ticket: GroupDetailsTicketDto | null = null;
+  groupTickets: GroupDetailsTicketDto[] = [];
+  otherGroupTickets: GroupDetailsTicketDto[] = [];
+
+  loading = false;
+  error: string | null = null;
+  noGroup = false;
+
+  // Analysis (placeholder only – no API yet)
+  analysisText: string | null = null;
+  copied = false;
+  feedback: 'up' | 'down' | null = null;
+
+  private subscription = new Subscription();
 
   constructor(private readonly facade: DashboardFacade) {
-    this.state$ = this.facade.state$;
+    this.subscription.add(
+      this.facade.state$.subscribe((state: DashboardState) => {
+        this.mapStateToLegacyBindings(state);
+      }),
+    );
   }
 
-  close(): void {
+  // ─────────────────────────────────────────────
+  // UI → Facade actions
+  // ─────────────────────────────────────────────
+
+  onClose(): void {
     this.facade.closeSidePanel();
-    this.expandedTicketId = null;
   }
 
-  toggle(ticketId: string): void {
-    this.expandedTicketId = this.expandedTicketId === ticketId ? null : ticketId;
+  // Legacy handlers (present but disabled behavior-wise)
+
+  generateAnalysis(): void {
+    // intentionally left blank
+    // backend API not implemented yet
   }
 
-  isExpanded(ticketId: string): boolean {
-    return this.expandedTicketId === ticketId;
+  copyGroupAnalysis(): void {
+    // placeholder UI behavior only
+    if (this.analysisText) {
+      navigator.clipboard.writeText(this.analysisText);
+      this.copied = true;
+    }
   }
 
-  trackByTicketId(_: number, ticket: any): string {
-    return ticket.id;
+  onFeedback(value: 'up' | 'down'): void {
+    // placeholder UI state only
+    this.feedback = value;
+  }
+
+  // ─────────────────────────────────────────────
+  // Internal mapping (UI adapter only)
+  // ─────────────────────────────────────────────
+
+  private mapStateToLegacyBindings(state: DashboardState): void {
+    this.loading = state.loading;
+    this.error = null; // backend errors are not modeled here yet
+
+    if (!state.selectedGroup) {
+      this.noGroup = true;
+      this.ticket = null;
+      this.groupTickets = [];
+      this.otherGroupTickets = [];
+      return;
+    }
+
+    this.noGroup = false;
+
+    const tickets = state.selectedGroup.tickets ?? [];
+
+    // Backend guarantees:
+    // - clicked ticket is FIRST
+    this.ticket = tickets[0] ?? null;
+    this.groupTickets = tickets;
+    this.otherGroupTickets = tickets.slice(1);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

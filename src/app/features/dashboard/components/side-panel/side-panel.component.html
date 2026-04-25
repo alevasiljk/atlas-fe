@@ -1,64 +1,145 @@
-<div class="side-panel-overlay" *ngIf="state$ | async as state">
-  <aside class="side-panel" *ngIf="state.sidePanelOpen">
-    <!-- HEADER -->
-    <header class="side-panel-header">
-      <h2 *ngIf="state.selectedGroup; else noGroupTitle">
-        {{ state.selectedGroup.name }}
-      </h2>
+<div class="side-panel">
+  <div class="side-panel__header">
+    <h2 class="side-panel__title">
+      {{ ticket?.groupName }}
+    </h2>
+    <div class="side-panel__header-actions">
+      @if (groupTickets.length > 0) {
+        <button
+          mat-icon-button
+          (click)="generateAnalysis()"
+          [matTooltip]="i18n.labels().generateAnalysis"
+          aria-label="Generate analysis"
+        >
+          <mat-icon>auto_awesome</mat-icon>
+        </button>
+      }
+      <button mat-icon-button (click)="onClose()" aria-label="Close panel" cdkFocusInitial>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
 
-      <ng-template #noGroupTitle>
-        <h2>This ticket has no group assigned</h2>
-      </ng-template>
-
-      <button class="close-btn" (click)="close()">✕</button>
-    </header>
-
-    <hr />
-
-    <!-- GROUP TICKETS -->
-    <section *ngIf="state.selectedGroup; else noGroupContent">
-      <div
-        class="ticket-card"
-        *ngFor="let ticket of state.selectedGroup.tickets; trackBy: trackByTicketId; let i = index"
-        [class.highlighted]="i === 0"
+  <div class="side-panel__content">
+    @if (!loading && !error && ticket) {
+      <mat-expansion-panel
+        class="side-panel__expansion-panel"
+        [expanded]="true"
+        [class.group-ticket--resolved]="ticket.resolved === true"
+        [class.group-ticket--unresolved]="ticket.resolved === false"
       >
-        <div class="ticket-header" (click)="toggle(ticket.id)">
-          <div>
-            <strong>{{ ticket.jiraKey }}</strong>
-            <p>{{ ticket.summary || '-' }}</p>
-          </div>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="side-panel__panel-title">
+            <span class="group-ticket__jira-key">{{ ticket.jiraKey }}</span>
+            <span class="group-ticket__title">{{ ticket.summary }}</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
-          <span class="status">
-            {{ ticket.resolved ? 'Resolved' : 'Unresolved' }}
-          </span>
+        <div class="side-panel__match-body">
+          <p class="group-ticket__description">
+            {{ ticket.description }}
+          </p>
         </div>
+      </mat-expansion-panel>
 
-        <div class="ticket-body" *ngIf="i === 0 || isExpanded(ticket.id)">
-          <p>{{ ticket.description }}</p>
-        </div>
+      <div class="side-panel__separator"></div>
+    }
+
+    <!-- Loading state -->
+    @if (loading) {
+      <div class="side-panel__spinner">
+        <mat-spinner diameter="40" />
       </div>
+    }
 
-      <hr />
+    <!-- Error state -->
+    @if (!loading && error) {
+      <p class="side-panel__error">{{ error }}</p>
+    }
 
-      <!-- ANALYSIS -->
-      <section class="analysis">
-        <h4>ANALYSIS</h4>
-        <p class="placeholder">Click “Generate Analysis” to create a summary for this group.</p>
+    <!-- No-group empty state -->
+    @if (!loading && !error && noGroup) {
+      <p class="side-panel__empty side-panel__empty--no-group">
+        This ticket has no group assigned.
+      </p>
+    }
 
-        <div class="analysis-actions">
-          <button disabled>Generate Analysis</button>
+    <!-- Empty state (group exists but no other members) -->
+    @if (!loading && !error && !noGroup && otherGroupTickets.length === 0) {
+      <p class="side-panel__empty">No related tickets.</p>
+    }
 
-          <div class="feedback">
-            <button disabled>👍</button>
-            <button disabled>👎</button>
-          </div>
-        </div>
-      </section>
-    </section>
+    <!-- Group ticket list -->
+    @if (!loading && !error && !noGroup && otherGroupTickets.length > 0) {
+      <mat-accordion class="side-panel__accordion">
+        @for (t of otherGroupTickets; track t.jiraKey) {
+          <mat-expansion-panel
+            class="side-panel__expansion-panel"
+            [class.group-ticket--resolved]="t.resolved === true"
+            [class.group-ticket--unresolved]="t.resolved === false"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title class="side-panel__panel-title">
+                <span class="group-ticket__jira-key">{{ t.jiraKey }}</span>
+                <span class="group-ticket__title">{{ t.summary }}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
 
-    <!-- NO GROUP CONTENT -->
-    <ng-template #noGroupContent>
-      <p class="no-group-text">This ticket has no group assigned.</p>
-    </ng-template>
-  </aside>
+            <div class="side-panel__match-body">
+              <p class="group-ticket__description">{{ t.description }}</p>
+            </div>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    }
+  </div>
+
+  <!-- Group Analysis Comment — only when related tickets exist -->
+  @if (!loading && !error && !noGroup && groupTickets.length > 0 && ticket) {
+    <mat-divider />
+    <div class="side-panel__group-analysis">
+      <div class="side-panel__group-analysis-header">
+        <mat-icon class="analysis-icon">insights</mat-icon>
+        <span class="analysis-title">{{ i18n.labels().groupAnalysisComment }}</span>
+      </div>
+      <div class="analysis-text-box">
+        @if (analysisText) {
+          <p class="analysis-text">{{ ticket.description }}</p>
+          <button
+            mat-icon-button
+            class="analysis-copy-btn"
+            (click)="copyGroupAnalysis()"
+            [matTooltip]="copied ? 'Copied!' : 'Copy analysis'"
+            aria-label="Copy group analysis to clipboard"
+          >
+            <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+          </button>
+        } @else {
+          <p class="analysis-placeholder">
+            Click "Generate Analysis" to create a summary for this group.
+          </p>
+        }
+      </div>
+      <div class="analysis-feedback">
+        <button
+          mat-icon-button
+          [class.analysis-feedback--active]="feedback === 'up'"
+          (click)="onFeedback('up')"
+          aria-label="Thumbs up – helpful"
+          matTooltip="Helpful"
+        >
+          <mat-icon>thumb_up</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [class.analysis-feedback--active]="feedback === 'down'"
+          (click)="onFeedback('down')"
+          aria-label="Thumbs down – not helpful"
+          matTooltip="Not helpful"
+        >
+          <mat-icon>thumb_down</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
 </div>
